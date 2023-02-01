@@ -1,0 +1,59 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model match {
+  id                              Int      @id @default(autoincrement())
+  date                            DateTime @default(dbgenerated("CURRENT_DATE")) @db.Date
+  winner_team_id                  Int
+  loser_team_id                   Int
+  team_match_loser_team_idToteam  team     @relation("match_loser_team_idToteam", fields: [loser_team_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  team_match_winner_team_idToteam team     @relation("match_winner_team_idToteam", fields: [winner_team_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model player {
+  id         Int     @id @default(autoincrement())
+  first_name String? @db.VarChar(255)
+  last_name  String? @db.VarChar(255)
+  team_id    Int
+  team       team    @relation(fields: [team_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model project {
+  id          Int      @id @default(autoincrement())
+  creator_id  Int
+  created     DateTime @db.Timestamp(6)
+  title       String?  @db.VarChar(50)
+  description String?  @db.VarChar(255)
+  users       users    @relation(fields: [creator_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_project_user")
+}
+
+model students {
+  id    Int       @id @default(autoincrement())
+  name  String?   @db.VarChar(255)
+  email String?   @db.VarChar(255)
+  age   Decimal?  @db.Decimal(11, 0)
+  dob   DateTime? @db.Date
+}
+
+model team {
+  id                               Int      @id @default(autoincrement())
+  name                             String?  @db.VarChar(255)
+  match_match_loser_team_idToteam  match[]  @relation("match_loser_team_idToteam")
+  match_match_winner_team_idToteam match[]  @relation("match_winner_team_idToteam")
+  player                           player[]
+}
+
+model users {
+  id             Int       @id @default(autoincrement())
+  username       String?   @db.VarChar(255)
+  email          String?   @db.VarChar(255)
+  joined         DateTime? @db.Timestamp(6)
+  last_logged_in DateTime? @db.Timestamp(6)
+  project        project[]
+}

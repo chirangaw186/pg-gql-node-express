@@ -1,12 +1,15 @@
 const { db } = require("../pgAdaptor");
-const { GraphQLObjectType, GraphQLID } = require("graphql");
+const { GraphQLObjectType, GraphQLID, GraphQLList } = require("graphql");
 const { UserType, ProjectType } = require("./types");
+const { PrismaClient } = require("@prisma/client");
+
+const prisma = new PrismaClient();
 
 const RootQuery = new GraphQLObjectType({
   name: "RootQueryType",
   type: "Query",
   fields: {
-    project: {
+    projectbyid: {
       type: ProjectType,
       args: { id: { type: GraphQLID } },
       resolve(parentValue, args) {
@@ -30,6 +33,14 @@ const RootQuery = new GraphQLObjectType({
           .one(query, values)
           .then(res => res)
           .catch(err => err);
+      }
+    },
+    projects: {
+      type: new GraphQLList(ProjectType),
+      resolve(parentValue, args) {
+        const query = `SELECT * FROM project`;
+        return prisma.project.findMany({});
+          
       }
     }
   }
