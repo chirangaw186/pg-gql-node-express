@@ -1,3 +1,4 @@
+const { prisma } = require("@prisma/client");
 const graphql = require("graphql");
 const db = require("../pgAdaptor").db;
 const { GraphQLObjectType, GraphQLID, GraphQLString, GraphQLBoolean } = graphql;
@@ -31,5 +32,31 @@ const RootMutation = new GraphQLObjectType({
     }
   }
 });
+
+// const RootMutation = new GraphQLObjectType({
+//   name: "RootMutationType",
+//   type: "Mutation",
+//   fields: {
+//     addProject: {
+//       type: ProjectType,
+//       args: {
+//         creatorId: { type: GraphQLID },
+//         title: { type: GraphQLString },
+//         description: { type: GraphQLString }
+//       },
+//       resolve(parentValue, args) {
+
+//         return prisma.project.create({
+//           data :{
+//             creatorId,
+//             title: args.title,
+//             description:args.description
+//           }
+//         })
+//       }
+//     }
+//   }
+// });
+
 
 exports.mutation = RootMutation;
