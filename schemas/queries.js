@@ -2,6 +2,7 @@ const { db } = require("../pgAdaptor");
 const { GraphQLObjectType, GraphQLID, GraphQLList } = require("graphql");
 const { UserType, ProjectType } = require("./types");
 const { PrismaClient } = require("@prisma/client");
+const { projects } = require("./fields");
 
 const prisma = new PrismaClient();
 
@@ -35,14 +36,7 @@ const RootQuery = new GraphQLObjectType({
           .catch(err => err);
       }
     },
-    projects: {
-      type: new GraphQLList(ProjectType),
-      resolve(parentValue, args) {
-        const query = `SELECT * FROM project`;
-        return prisma.project.findMany({});
-          
-      }
-    }
+    projects
   }
 });
 
